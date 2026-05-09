@@ -20,7 +20,7 @@ function debouncedSyncToCloud() {
 // ЗАГРУЗКА ДАННЫХ ИЗ GITHUB GIST
 async function loadCompaniesFromCloud() {
     try {
-        const response = await fetch(GIST_RAW_URL + '?t=' + Date.now()); // Добавляем timestamp чтобы избежать кэша
+        const response = await fetch(GIST_RAW_URL + '?t=' + Date.now());
         if (!response.ok) throw new Error('Ошибка загрузки');
         const data = await response.json();
         
@@ -39,20 +39,9 @@ async function loadCompaniesFromCloud() {
     }
 }
 
-// СОХРАНЕНИЕ ДАННЫХ В GITHUB GIST
+// СОХРАНЕНИЕ ДАННЫХ В GITHUB GIST (ПОЛНАЯ СИНХРОНИЗАЦИЯ)
 async function saveCompaniesToCloud() {
     try {
-        // Получаем текущий gist
-        const getResponse = await fetch(GIST_API_URL, {
-            headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
-        });
-        const gistData = await getResponse.json();
-        
-        // Получаем текущий файл
-        const currentFile = gistData.files['companies.json'];
-        const currentContent = currentFile ? currentFile.content : '{"companies":[]}';
-        
-        // Обновляем файл
         const updateResponse = await fetch(GIST_API_URL, {
             method: 'PATCH',
             headers: {
@@ -81,7 +70,7 @@ async function saveCompaniesToCloud() {
 }
 
 async function autoSyncToCloud() {
-    debouncedSyncToCloud();
+    await saveCompaniesToCloud();
 }
 
 function escapeHtml(str) {
@@ -406,139 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return reviews;
     }
     
-    function forceLoadDemoCompanies() {
-        let reviewIdCounter = 1000;
-        
-        const megaLeaderReviews = generate1100Reviews();
-        
-        const megaLeader = {
-            id: 5000,
-            name: "МЕГА-ЛИДЕР 1100",
-            category: "it",
-            city: "Грозный",
-            address: "пр. Победы, 1",
-            founded: 2000,
-            employees: 5000,
-            growth: 450,
-            revenue: "50 млрд ₽",
-            rating: 4.95,
-            description: "Абсолютный лидер рынка с 1100 отзывами!",
-            phone: "+7 (928) 000-00-01",
-            email: "mega@leader.ru",
-            website: "mega-leader.ru",
-            uniqueness: "1100 довольных клиентов",
-            advantages: "1. №1 в ЧР\n2. 20 лет опыта\n3. Гарантия качества",
-            responseRate: 98,
-            responseTime: "0.5 ч",
-            communicationScore: 99,
-            reviews: megaLeaderReviews,
-            cases: [{ id: 1, title: "Гигантский проект", description: "Успех 2024", image: "" }],
-            coords: [43.3180, 45.6990],
-            accessKey: "MEGA-LEADER-1100",
-            metricScore: 50,
-            trustIndex: 0
-        };
-        
-        const leadersData = [
-            { name: "БИЗНЕС ЛИДЕР", category: "it", city: "Грозный", address: "пр. Путина, 15", founded: 2015, employees: 450, growth: 150, revenue: "2.5 млрд ₽", reviewsCount: 200 },
-            { name: "МЕГА СТРОЙ", category: "construction", city: "Грозный", address: "ул. Ленина, 100", founded: 2010, employees: 780, growth: 95, revenue: "5.2 млрд ₽", reviewsCount: 150 },
-            { name: "ЗОЛОТОЙ ДОНУТ", category: "food", city: "Грозный", address: "пр-кт Кадырова, 22", founded: 2018, employees: 320, growth: 88, revenue: "890 млн ₽", reviewsCount: 120 },
-            { name: "ЭНЕРГО-ЛИДЕР", category: "fuel", city: "Гудермес", address: "Промзона, 5", founded: 2005, employees: 1200, growth: 120, revenue: "12.5 млрд ₽", reviewsCount: 100 }
-        ];
-        
-        const leaders = leadersData.map((l, idx) => {
-            const reviews = generateRandomReviews(l.reviewsCount, reviewIdCounter);
-            reviewIdCounter += l.reviewsCount;
-            return {
-                id: 1000 + idx,
-                name: l.name,
-                category: l.category,
-                city: l.city,
-                address: l.address,
-                founded: l.founded,
-                employees: l.employees,
-                growth: l.growth,
-                revenue: l.revenue,
-                rating: 4.7 + (Math.random() * 0.3),
-                description: `Ведущая компания в сфере ${l.category} Чеченской Республики.`,
-                phone: `+7 (928) ${100000 + idx * 111111}`,
-                email: `info@${l.name.toLowerCase().replace(/ /g, '')}.ru`,
-                website: `${l.name.toLowerCase().replace(/ /g, '')}.ru`,
-                uniqueness: `Уникальное предложение: ${l.reviewsCount}+ довольных клиентов`,
-                advantages: `1. Лидер рынка\n2. Инновации\n3. Надёжность`,
-                responseRate: 95,
-                responseTime: "1.2 ч",
-                communicationScore: 94,
-                reviews: reviews,
-                cases: [{ id: 1, title: `Кейс ${l.name}`, description: "Успешный проект в 2024 году", image: "" }],
-                coords: [43.3179 + (Math.random() - 0.5) * 0.03, 45.6987 + (Math.random() - 0.5) * 0.03],
-                accessKey: generateAccessKey(l.name),
-                metricScore: 50,
-                trustIndex: 0
-            };
-        });
-        
-        const regularNames = [
-            "АВТОСЕРВИС ПРОФИ", "ЧИСТЫЙ ДОМ", "ТЕХНО-МИР", "МЕБЕЛЬ ГРОЗНЫЙ", "АПТЕКА ЗДОРОВЬЕ",
-            "СТОЛИЧНЫЙ БАНК", "ЮНГА-ТУР", "СПОРТМАСТЕР ЧР", "ДОМ БЫТА", "ШИНОМОНТАЖ 95",
-            "КАФЕ ВОСТОК", "ПИЦЦА ДОМ", "САЛОН КРАСОТЫ", "СТОМАТОЛОГИЯ УЛЫБКА", "ШКОЛА АНГЛИЙСКОГО"
-        ];
-        
-        const regulars = [];
-        for (let i = 0; i < 15; i++) {
-            const reviewsCount = Math.floor(Math.random() * 50) + 1;
-            const reviews = generateRandomReviews(reviewsCount, reviewIdCounter);
-            reviewIdCounter += reviewsCount;
-            const categories = ['food', 'fuel', 'retail', 'it', 'construction'];
-            const cities = ['Грозный', 'Гудермес', 'Аргун', 'Шали', 'Урус-Мартан'];
-            
-            regulars.push({
-                id: 2000 + i,
-                name: regularNames[i],
-                category: categories[i % categories.length],
-                city: cities[i % cities.length],
-                address: `ул. Шоссейная, ${i+1}`,
-                founded: 2010 + (i % 15),
-                employees: 10 + (i * 7),
-                growth: 15 + Math.random() * 85,
-                revenue: `${(Math.random() * 100 + 5).toFixed(1)} млн ₽`,
-                rating: 3.5 + (Math.random() * 1.5),
-                description: `Компания "${regularNames[i]}" предоставляет качественные услуги.`,
-                phone: `+7 (928) ${200000 + i * 11111}`,
-                email: `info@${regularNames[i].toLowerCase().replace(/ /g, '')}.ru`,
-                website: `${regularNames[i].toLowerCase().replace(/ /g, '')}.ru`,
-                uniqueness: "Индивидуальный подход к каждому клиенту",
-                advantages: "1. Низкие цены\n2. Гарантия качества\n3. Быстрое обслуживание",
-                responseRate: 70 + Math.random() * 25,
-                responseTime: `${(Math.random() * 5 + 1).toFixed(1)} ч`,
-                communicationScore: 65 + Math.random() * 30,
-                reviews: reviews,
-                cases: [],
-                coords: [43.3179 + (Math.random() - 0.5) * 0.1, 45.6987 + (Math.random() - 0.5) * 0.1],
-                accessKey: generateAccessKey(regularNames[i]),
-                metricScore: 50,
-                trustIndex: 0
-            });
-        }
-        
-        return [megaLeader, ...leaders, ...regulars];
-    }
-    
-    function loadFromLocalStorage() {
-        const saved = localStorage.getItem('metric_companies_v3');
-        if (saved) {
-            try {
-                companiesData = JSON.parse(saved);
-                console.log('✅ Данные загружены из localStorage, компаний:', companiesData.length);
-            } catch(e) {
-                console.error('Ошибка загрузки из localStorage', e);
-                loadDemoData();
-            }
-        } else {
-            loadDemoData();
-        }
-    }
-    
     function loadDemoData() {
         const originalCompanies = [
             { 
@@ -588,11 +444,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         ];
         
-        const demoCompanies = forceLoadDemoCompanies();
+        const demoCompanies = [];
         companiesData = [...originalCompanies, ...demoCompanies];
         
         updateAllMetricScores();
         saveToLocalStorage();
+    }
+    
+    function loadFromLocalStorage() {
+        const saved = localStorage.getItem('metric_companies_v3');
+        if (saved) {
+            try {
+                companiesData = JSON.parse(saved);
+                console.log('✅ Данные загружены из localStorage, компаний:', companiesData.length);
+            } catch(e) {
+                console.error('Ошибка загрузки из localStorage', e);
+                loadDemoData();
+            }
+        } else {
+            loadDemoData();
+        }
     }
     
     function saveToLocalStorage() {
@@ -762,16 +633,14 @@ document.addEventListener('DOMContentLoaded', () => {
         showLoadingSpinner(true);
         loadFromLocalStorage();
         
-        // Пытаемся загрузить из облака GitHub Gist
         const cloudLoaded = await loadCompaniesFromCloud();
         if (cloudLoaded && companiesData.length > 0) {
             updateAllIndices();
             saveToLocalStorage();
             console.log('✅ Синхронизация с GitHub Gist успешна');
         } else if (companiesData.length > 0) {
-            // Если есть локальные данные, сохраняем их в облако
             console.log('⚠️ Сохраняем локальные данные в GitHub Gist');
-            await saveCompaniesToCloud();
+            await autoSyncToCloud();
         }
         
         loadFavorites();
@@ -1451,7 +1320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let list = getTop20List();
         if (list.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:#6B7F9F;">НЕТ КОМПАНИЙ В ТОП-20</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:3rem;color:#6B7F9F;">НЕТ КОМПАНИЙ В ТОП-20</span></tr>`;
             document.getElementById('totalGrowth').innerHTML = '+0%';
             document.getElementById('avgGrowth').innerHTML = '0%';
             return;
