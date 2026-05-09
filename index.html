@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="description" content="METRIC — цифровая экосистема бизнеса Чеченской Республики">
+    <title>METRIC | Экосистема ЧР</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="cursor-glow"></div>
+<div class="noise"></div>
+
+<main>
+
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="hero-bg-shape shape-1"></div>
+            <div class="hero-bg-shape shape-2"></div>
+            <div class="hero-bg-shape shape-3"></div>
+        </div>
+        <div class="hero-container">
+            <div class="hero-badge animate-hero-1" id="adminTrigger">
+                <div class="badge-line"></div>
+                <div class="badge-text">ГЕНИУМ 3.0</div>
+                <div class="badge-icon">⟟</div>
+            </div>
+            <div class="hero-title-block animate-hero-2">
+                <div class="hero-pre-title">ЦИФРОВАЯ ЭКОСИСТЕМА</div>
+                <h1 class="hero-main-title">
+                    <span class="title-word">M</span><span class="title-word">E</span>
+                    <span class="title-word">T</span><span class="title-word">R</span>
+                    <span class="title-word">I</span><span class="title-word">C</span>
+                </h1>
+                <div class="hero-sub-title">ЧЕЧЕНСКОЙ РЕСПУБЛИКИ</div>
+            </div>
+            <div class="hero-stats-float animate-hero-3">
+                <div class="stat-float stat-1"><span class="stat-float-number" id="totalCompanies">0</span><span class="stat-float-label">ПРЕДПРИЯТИЙ</span><div class="stat-float-line"></div></div>
+                <div class="stat-float stat-2"><span class="stat-float-number">12</span><span class="stat-float-label">КЛАСТЕРОВ</span><div class="stat-float-line"></div></div>
+                <div class="stat-float stat-3"><span class="stat-float-number" id="totalReviews">0</span><span class="stat-float-label">ОТЗЫВОВ</span><div class="stat-float-line"></div></div>
+            </div>
+            <div class="hero-description-block animate-hero-4">
+                <p class="hero-desc-text">Предприятия. Кластеры.<br>Единое пространство данных, интеллекта и синергии.</p>
+                <div class="hero-desc-line"></div>
+            </div>
+            <div class="hero-button-block animate-hero-5">
+                <a href="#businesses" class="hero-btn"><span class="btn-text">ИССЛЕДОВАТЬ БИЗНЕСЫ</span><span class="btn-arrow">→</span></a>
+                <button id="companyLoginBtn" class="hero-btn" style="border-color: rgba(201,160,61,0.6);"><span class="btn-text">⟟ ВОЙТИ В КАБИНЕТ</span><span class="btn-arrow">→</span></button>
+            </div>
+            <div class="floating-number n1">⟟</div>
+            <div class="floating-number n2">GS</div>
+            <div class="floating-number n3">⚡</div>
+            <div class="floating-number n4">⟟</div>
+            <div class="floating-number n5">GS-1</div>
+            <div class="hero-scroll animate-hero-6"><div class="scroll-text">ПРОСКРОЛЛ</div><div class="scroll-dot"></div><div class="scroll-line"></div></div>
+        </div>
+    </section>
+
+    <section class="map-section scroll-animate">
+        <div class="section-header">
+            <span class="section-code">00/01</span>
+            <h2 class="section-title">КАРТА БИЗНЕСОВ</h2>
+            <span class="section-sub">ГЕОЛОКАЦИЯ ПРЕДПРИЯТИЙ / КЛАСТЕРНЫЙ АНАЛИЗ</span>
+        </div>
+        <div class="map-container">
+            <div id="businessMap" style="height: 450px; width: 100%; border-radius: 8px; z-index: 1;"></div>
+            <div class="map-legend">
+                <div class="legend-item"><span style="background: #C9A03D;"></span> Общепит</div>
+                <div class="legend-item"><span style="background: #4AC0E0;"></span> Энергетика</div>
+                <div class="legend-item"><span style="background: #5CBA6F;"></span> Ритейл / Опт</div>
+                <div class="legend-item"><span style="background: #A855F7;"></span> IT / Телеком</div>
+                <div class="legend-item"><span style="background: #FF6B6B;"></span> Строительство</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="businesses-section" id="businesses">
+        <div class="section-header scroll-animate">
+            <span class="section-code">00/02</span>
+            <h2 class="section-title">РЕЕСТР БИЗНЕСОВ</h2>
+            <span class="section-sub">ЧЕЧЕНСКАЯ РЕСПУБЛИКА / ПРЕДПРИЯТИЯ С РЕЙТИНГОМ</span>
+        </div>
+        <div class="businesses-controls scroll-animate">
+            <div class="search-wrapper">
+                <span class="search-icon">⌕</span>
+                <input type="text" id="businessSearch" class="business-search" placeholder="ПОИСК ПО НАЗВАНИЮ...">
+            </div>
+            <div class="filter-wrapper">
+                <span class="filter-label">ФИЛЬТР:</span>
+                <div class="filter-buttons" id="filterButtons">
+                    <button class="filter-btn active" data-filter="all">ВСЕ</button>
+                    <button class="filter-btn" data-filter="food">ОБЩЕПИТ</button>
+                    <button class="filter-btn" data-filter="fuel">ЭНЕРГЕТИКА</button>
+                    <button class="filter-btn" data-filter="retail">РИТЕЙЛ / ОПТ</button>
+                    <button class="filter-btn" data-filter="it">IT / ТЕЛЕКОМ</button>
+                    <button class="filter-btn" data-filter="construction">СТРОИТЕЛЬСТВО</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sorting-panel scroll-animate">
+            <div class="sort-group">
+                <span class="sort-group-label">СОРТИРОВКА:</span>
+                <select id="businessSort" class="sort-select">
+                    <option value="trust">ПО ИНДЕКСУ ДОВЕРИЯ ↓</option>
+                    <option value="trust_asc">ПО ИНДЕКСУ ДОВЕРИЯ ↑</option>
+                    <option value="reviews">ПО КОЛИЧЕСТВУ ОТЗЫВОВ</option>
+                    <option value="founded">ПО ГОДУ ОСНОВАНИЯ</option>
+                    <option value="employees">ПО КОЛИЧЕСТВУ СОТРУДНИКОВ</option>
+                    <option value="name">ПО НАЗВАНИЮ</option>
+                </select>
+            </div>
+            <label class="favorites-toggle">
+                <input type="checkbox" id="showFavoritesOnly">
+                <span>ТОЛЬКО ИЗБРАННОЕ</span>
+            </label>
+        </div>
+        
+        <div class="businesses-grid" id="businessesGrid"></div>
+        <div class="businesses-count" id="businessesCount"></div>
+    </section>
+
+    <section class="market-stats-section scroll-animate" id="marketStatsSection">
+        <div id="marketStats"></div>
+    </section>
+
+    <section class="companies-list-section scroll-animate" id="companiesListSection">
+        <div class="section-header">
+            <span class="section-code">00/03</span>
+            <h2 class="section-title">СПИСОК ВСЕХ КОМПАНИЙ</h2>
+            <span class="section-sub">ПОЛНЫЙ КАТАЛОГ ПРЕДПРИЯТИЙ ЧЕЧЕНСКОЙ РЕСПУБЛИКИ</span>
+        </div>
+        <div class="companies-list-container" id="companiesListContainer"></div>
+    </section>
+
+    <section class="leaders-premium-section" id="leaders">
+        <div class="leaders-bg-accent"></div>
+        <div class="section-header scroll-animate">
+            <span class="section-code">00/04</span>
+            <h2 class="section-title">ЛИДЕРЫ РЫНКА</h2>
+            <span class="section-sub">ЭКСКЛЮЗИВНЫЙ КЛУБ / ТОП ПРЕДПРИЯТИЙ ЧР</span>
+        </div>
+        <div class="leaders-premium-grid" id="leadersPremiumGrid"></div>
+    </section>
+
+    <section class="growth-stats-section scroll-animate" id="growthStatsSection">
+        <div class="section-header">
+            <span class="section-code">00/05</span>
+            <h2 class="section-title">ДИНАМИКА РОСТА ПЛАТФОРМЫ</h2>
+            <span class="section-sub">АНАЛИТИКА ПОСЕЩЕНИЙ / РАЗВИТИЕ ЭКОСИСТЕМЫ</span>
+        </div>
+        <div class="growth-chart-container">
+            <div class="chart-controls-panel">
+                <button class="chart-period-btn active" data-period="week">1 НЕДЕЛЯ</button>
+                <button class="chart-period-btn" data-period="month">1 МЕСЯЦ</button>
+                <button class="chart-period-btn" data-period="year">1 ГОД</button>
+                <button class="chart-period-btn" data-period="2years">2 ГОДА</button>
+                <button class="chart-period-btn" data-period="all">ВСЯ ИСТОРИЯ</button>
+            </div>
+            <div class="growth-chart-wrapper">
+                <canvas id="growthChart" style="height: 400px; width: 100%;"></canvas>
+            </div>
+            <div class="growth-stats-grid">
+                <div class="growth-stat-card">
+                    <div class="growth-stat-label">ПОСЕЩЕНИЙ СЕГОДНЯ</div>
+                    <div class="growth-stat-value" id="todayVisits">0</div>
+                    <div class="growth-stat-trend" id="todayTrend">—</div>
+                </div>
+                <div class="growth-stat-card">
+                    <div class="growth-stat-label">ЗА НЕДЕЛЮ</div>
+                    <div class="growth-stat-value" id="weekVisits">0</div>
+                    <div class="growth-stat-trend positive" id="weekTrend">+0%</div>
+                </div>
+                <div class="growth-stat-card">
+                    <div class="growth-stat-label">ЗА МЕСЯЦ</div>
+                    <div class="growth-stat-value" id="monthVisits">0</div>
+                    <div class="growth-stat-trend positive" id="monthTrend">+0%</div>
+                </div>
+                <div class="growth-stat-card">
+                    <div class="growth-stat-label">ЗА ГОД</div>
+                    <div class="growth-stat-value" id="yearVisits">0</div>
+                    <div class="growth-stat-trend positive" id="yearTrend">+0%</div>
+                </div>
+                <div class="growth-stat-card">
+                    <div class="growth-stat-label">НОВЫХ КОМПАНИЙ</div>
+                    <div class="growth-stat-value" id="newCompanies">0</div>
+                    <div class="growth-stat-trend" id="newCompaniesTrend">—</div>
+                </div>
+                <div class="growth-stat-card">
+                    <div class="growth-stat-label">НОВЫХ ОТЗЫВОВ</div>
+                    <div class="growth-stat-value" id="newReviews">0</div>
+                    <div class="growth-stat-trend" id="newReviewsTrend">—</div>
+                </div>
+            </div>
+            <div class="growth-note">
+                <span class="note-icon">⟟</span>
+                <span class="note-text">ДАННЫЕ О ПОСЕЩЕНИЯХ БУДУТ ДОСТУПНЫ ПОСЛЕ ЗАПУСКА ПЛАТФОРМЫ</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="top-section" id="top">
+        <div class="section-header scroll-animate">
+            <span class="section-code">00/06</span>
+            <h2 class="section-title">ТОП-20 БЫСТРОРАСТУЩИХ</h2>
+            <span class="section-sub">ГРОЗНЫЙ / ЛИДЕРЫ РОСТА 2024-2025</span>
+        </div>
+        <div class="top-controls scroll-animate">
+            <div class="top-stats">
+                <div class="top-stat"><span class="top-stat-value" id="totalGrowth">+∞</span><span class="top-stat-label">СОВОКУПНЫЙ РОСТ</span></div>
+                <div class="top-stat"><span class="top-stat-value" id="avgGrowth">0%</span><span class="top-stat-label">СРЕДНИЙ РОСТ</span></div>
+            </div>
+            <div class="top-sort">
+                <span class="sort-label">СОРТИРОВКА:</span>
+                <div class="sort-buttons">
+                    <button class="sort-btn active" data-sort="rank">ПО РЕЙТИНГУ</button>
+                    <button class="sort-btn" data-sort="growth">ПО РОСТУ ↓</button>
+                    <button class="sort-btn" data-sort="name">ПО НАЗВАНИЮ</button>
+                </div>
+            </div>
+        </div>
+        <div class="top-table-container scroll-animate">
+            <table class="top-table" id="topTable">
+                <thead>
+                    <tr>
+                        <th class="col-rank">№</th>
+                        <th class="col-name">БИЗНЕС</th>
+                        <th class="col-cat">КАТЕГОРИЯ</th>
+                        <th class="col-growth">РОСТ %</th>
+                        <th class="col-revenue">ВЫРУЧКА</th>
+                        <th class="col-trend">ТРЕНД</th>
+                        <th class="col-expand"></th>
+                    </tr>
+                </thead>
+                <tbody id="topTableBody"></tbody>
+            </table>
+        </div>
+        <div class="top-note scroll-animate">
+            <span class="note-icon">⟟</span>
+            <span class="note-text">Нажмите на ▶ в последней колонке, чтобы развернуть детальную статистику и график роста.</span>
+        </div>
+    </section>
+
+    <footer class="metric-footer">
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo">⟟ METRIC</div>
+                    <div class="footer-desc">ЦИФРОВАЯ ЭКОСИСТЕМА<br>ЧЕЧЕНСКОЙ РЕСПУБЛИКИ</div>
+                    <div class="footer-social">
+                        <a href="#" class="social-link">⟟ TG</a>
+                        <a href="#" class="social-link">⟟ VK</a>
+                        <a href="#" class="social-link">⟟ OK</a>
+                        <a href="#" class="social-link">⟟ X</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-links-col">
+                        <span class="footer-links-title">ПЛАТФОРМА</span>
+                        <a href="#">О ГЕНИУМЕ</a>
+                        <a href="#">ТЕХНОЛОГИИ</a>
+                        <a href="#">БЕЗОПАСНОСТЬ</a>
+                        <a href="#">API METRIC</a>
+                    </div>
+                    <div class="footer-links-col">
+                        <span class="footer-links-title">РЕСУРСЫ</span>
+                        <a href="#">СИНГУЛЯРНАЯ КАРТА</a>
+                        <a href="#">РЕЙТИНГИ</a>
+                        <a href="#">ИНДЕКС ДОВЕРИЯ</a>
+                        <a href="#">СТАТУС</a>
+                    </div>
+                    <div class="footer-links-col">
+                        <span class="footer-links-title">КОНТАКТ</span>
+                        <a href="#">RESONANCE@METRIC.RU</a>
+                        <a href="#">+7 (928) 000-00-00</a>
+                        <a href="#">TELEGRAM / METRIC</a>
+                        <a href="#">ПРЕСС-ЦЕНТР</a>
+                    </div>
+                    <div class="footer-links-col">
+                        <span class="footer-links-title">ПАРТНЁРСТВО</span>
+                        <form id="partnershipForm" class="footer-partner-form">
+                            <input type="email" placeholder="EMAIL" required maxlength="100">
+                            <button type="submit">→</button>
+                        </form>
+                        <div class="footer-newsletter">
+                            <span>ПОДПИСАТЬСЯ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-middle">
+                <div class="synergy-line" id="synergyLine">
+                    <span class="synergy-text">СИНГУЛЯРНАЯ КАРТА</span>
+                    <div class="synergy-connection" id="dynamicConnection"></div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-copyright">
+                    <span>© 2026 METRIC. ВСЕ ПРАВА ЗАЩИЩЕНЫ</span>
+                </div>
+                <div class="footer-creator">
+                    <span class="creator-line"></span>
+                    <span class="creator-text">РАЗРАБОТАНО ⟟ MAVERICKS</span>
+                    <span class="creator-symbol">⟟</span>
+                </div>
+                <div class="footer-version">
+                    <span>◈ METRIC VER 3.0 ◈ GS-1 АКТИВЕН ◈</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<!-- ЛИЧНЫЙ КАБИНЕТ -->
+<div id="cabinetPanel" style="display: none;">
+    <div class="cabinet-overlay">
+        <div class="mobile-menu-toggle" id="mobileMenuToggle">
+            <span class="toggle-line"></span>
+            <span class="toggle-line"></span>
+            <span class="toggle-line"></span>
+        </div>
+        <div class="cabinet-sidebar" id="cabinetSidebar">
+            <div class="sidebar-brand">⟟ METRIC</div>
+            <div class="sidebar-user" id="sidebarCompanyName"></div>
+            <div class="sidebar-stats">
+                <div class="sidebar-stat">
+                    <span class="sidebar-stat-label">ИНДЕКС ДОВЕРИЯ</span>
+                    <span class="sidebar-stat-value" id="sidebarTrust">0</span>
+                    <div class="sidebar-progress"><div class="sidebar-progress-fill" id="sidebarTrustFill"></div></div>
+                </div>
+                <div class="sidebar-stat">
+                    <span class="sidebar-stat-label">ГЛОБАЛЬНЫЙ РЕЙТИНГ</span>
+                    <span class="sidebar-stat-value" id="sidebarRank">#0</span>
+                </div>
+                <div class="sidebar-stat">
+                    <span class="sidebar-stat-label">METRIC SCORE</span>
+                    <span class="sidebar-stat-value" id="sidebarScore">0</span>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <button class="sidebar-menu-item active" data-tab="main">ГЛАВНАЯ</button>
+                <button class="sidebar-menu-item" data-tab="profile">ПРОФИЛЬ</button>
+                <button class="sidebar-menu-item" data-tab="reviews">ОТЗЫВЫ</button>
+                <button class="sidebar-menu-item" data-tab="security">БЕЗОПАСНОСТЬ</button>
+            </div>
+            <button id="cabinetLogoutBtn" class="sidebar-logout">ВЫЙТИ</button>
+            <div class="sidebar-footer">СЕССИЯ: GS-1-⟟</div>
+        </div>
+        <div class="cabinet-sidebar-overlay" id="sidebarOverlay"></div>
+        <div class="cabinet-main">
+            <div class="cabinet-header">
+                <div class="cabinet-header-left">
+                    <div class="cabinet-greeting" id="cabinetGreeting"></div>
+                    <h1 class="cabinet-company-title" id="cabinetCompanyTitle"></h1>
+                </div>
+                <div class="cabinet-header-right">
+                    <div class="cabinet-time" id="liveTime"></div>
+                    <div class="cabinet-status">АКТИВНА</div>
+                </div>
+            </div>
+            <div class="cabinet-content" id="cabinetContent"></div>
+        </div>
+    </div>
+</div>
+
+<!-- АДМИН-ПАНЕЛЬ -->
+<div class="admin-panel" id="adminPanel">
+    <div class="admin-header">
+        <span class="admin-title">⟟ АДМИН-ПАНЕЛЬ</span>
+        <button class="admin-close" id="closeAdminPanel">✕</button>
+    </div>
+    <div class="admin-content">
+        <div id="adminLoadingSpinner" style="display:none; text-align:center; padding:1rem; color:#C9A03D;">⟟ СИНХРОНИЗАЦИЯ...</div>
+        <h4>ДОБАВИТЬ НОВУЮ КОМПАНИЮ</h4>
+        <form id="adminAddCompanyForm">
+            <div class="form-group"><label>Название компании *</label><input type="text" id="adminCompanyName" required placeholder="Пример: НОВАЯ КОМПАНИЯ" maxlength="100"></div>
+            <div class="form-group"><label>Сфера деятельности *</label><select id="adminCompanyCategory" required><option value="food">Общепит</option><option value="fuel">Энергетика</option><option value="retail">Ритейл / Опт</option><option value="it">IT / Телеком</option><option value="construction">Строительство</option></select></div>
+            <div class="form-group"><label>Город *</label><input type="text" id="adminCompanyCity" required placeholder="Грозный" maxlength="50"></div>
+            <div class="form-group"><label>Адрес</label><input type="text" id="adminCompanyAddress" placeholder="ул. Примерная, 1" maxlength="200"></div>
+            <div class="form-row-2">
+                <div class="form-group"><label>Год основания</label><input type="number" id="adminCompanyFounded" placeholder="2020"></div>
+                <div class="form-group"><label>Сотрудников</label><input type="number" id="adminCompanyEmployees" placeholder="50"></div>
+            </div>
+            <div class="form-row-2">
+                <div class="form-group"><label>METRIC SCORE</label><input type="number" id="adminCompanyScore" placeholder="50" min="0" max="100" readonly style="background:#0a1228;color:#5A6280;cursor:not-allowed;"></div>
+                <div class="form-group"><label>РОСТ %</label><input type="number" id="adminCompanyGrowth" placeholder="10" step="0.1"></div>
+            </div>
+            <div class="form-group"><label>ВЫРУЧКА / ОБОРОТ</label><input type="text" id="adminCompanyRevenue" placeholder="Пример: 10 млн ₽" maxlength="50"></div>
+            <div class="form-group"><label>Краткое описание</label><textarea id="adminCompanyDescription" rows="2" placeholder="Описание компании..." maxlength="1000"></textarea></div>
+            <div class="form-group"><label>КЛЮЧ ДОСТУПА</label><input type="text" id="adminCompanyKey" placeholder="Оставьте пустым для авто-генерации" maxlength="50"></div>
+            <button type="submit" class="admin-submit" id="adminSubmitBtn">⟟ ДОБАВИТЬ КОМПАНИЮ</button>
+        </form>
+        <div class="admin-divider"></div>
+        <h4>УПРАВЛЕНИЕ КОМПАНИЯМИ</h4>
+        <div id="adminCompaniesList" class="admin-companies-list"></div>
+    </div>
+</div>
+
+<!-- МОДАЛКИ -->
+<div class="modal-overlay" id="keyModal">
+    <div class="modal-container" style="max-width: 400px;">
+        <div class="modal-header">
+            <span class="modal-code">⟟ ВХОД В КАБИНЕТ</span>
+            <button class="modal-close" id="closeKeyModal">✕</button>
+        </div>
+        <div class="modal-content">
+            <div class="form-group"><label>ВВЕДИТЕ КЛЮЧ ДОСТУПА</label><input type="text" id="accessKeyInput" placeholder="Например: MAVERICKS-A7F9" style="font-family: monospace;background:#0D1220;border:1px solid rgba(201,160,61,0.3);color:#FFFFFF;" maxlength="50"></div>
+            <button id="submitKeyBtn" class="submit-review-btn">⟟ ВОЙТИ</button>
+            <div class="modal-note">Нет ключа? Отправьте заявку на <span style="color:#C9A03D;">metric@metric.ru</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="businessModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <span class="modal-code">⟟ ПРЕДПРИЯТИЕ ЧР</span>
+            <button class="modal-close" id="modalClose">✕</button>
+        </div>
+        <div class="modal-content" id="modalContent" style="color:#E8EDF5;line-height:1.6;"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="reviewsModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <span class="modal-code" id="reviewsModalTitle">⟟ ОТЗЫВЫ</span>
+            <button class="modal-close" id="closeReviewsModal">✕</button>
+        </div>
+        <div class="modal-content" id="reviewsContent"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="reviewModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <span class="modal-code">⟟ ОСТАВИТЬ ОТЗЫВ</span>
+            <button class="modal-close" id="closeReviewModal">✕</button>
+        </div>
+        <div class="modal-content">
+            <form id="reviewForm">
+                <input type="hidden" id="reviewCompanyId">
+                <div class="form-group"><label>Ваше имя</label><input type="text" id="reviewAuthor" placeholder="Аноним" maxlength="50"></div>
+                <div class="form-group"><label>Оценка (1-5)</label><input type="number" id="reviewRating" min="1" max="5" step="0.1" required></div>
+                <div class="form-group"><label>Ваш отзыв</label><textarea id="reviewComment" rows="4" required maxlength="500"></textarea></div>
+                <button type="submit" class="submit-review-btn" id="submitReviewBtn">⟟ ОТПРАВИТЬ ОТЗЫВ</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="respondModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <span class="modal-code">⟟ ОТВЕТИТЬ НА ОТЗЫВ</span>
+            <button class="modal-close" id="closeRespondModal">✕</button>
+        </div>
+        <div class="modal-content">
+            <form id="respondForm">
+                <input type="hidden" id="respondReviewId">
+                <input type="hidden" id="respondCompanyId">
+                <div class="form-group"><label>Ваш ответ</label><textarea id="respondText" rows="4" required maxlength="500"></textarea></div>
+                <button type="submit" class="submit-review-btn" id="submitRespondBtn">⟟ ОТПРАВИТЬ ОТВЕТ</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="caseModal">
+    <div class="modal-container">
+        <div class="modal-header">
+            <span class="modal-code">⟟ ДОБАВИТЬ КЕЙС</span>
+            <button class="modal-close" id="closeCaseModal">✕</button>
+        </div>
+        <div class="modal-content">
+            <form id="caseForm">
+                <div class="form-group"><label>Название кейса</label><input type="text" id="caseTitle" required maxlength="100"></div>
+                <div class="form-group"><label>Описание</label><textarea id="caseDescription" rows="3" required maxlength="500"></textarea></div>
+                <div class="form-group"><label>Ссылка на изображение</label><input type="text" id="caseImage" placeholder="https://..." maxlength="500"></div>
+                <button type="submit" class="submit-review-btn" id="submitCaseBtn">⟟ ДОБАВИТЬ КЕЙС</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
